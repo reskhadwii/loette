@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Our Journey</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Lora:ital@0;1&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pink:#ff4fa3; --pink-soft:#ffc2dc; --orange:#ff8a3d; --peach:#ffd9b8;
+  --paper:#fff6ec; --ink:#4a2a2f; --bg:#2a1218;
+  --grad:linear-gradient(90deg,var(--pink),var(--orange));
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Lora',serif;color:var(--paper);
+  background:
+    radial-gradient(900px 500px at 8% -10%,#ff4fa355,transparent),
+    radial-gradient(800px 500px at 100% 25%,#ff8a3d33,transparent),
+    var(--bg);
+  background-attachment:fixed;
+}
+svg.i{width:100%;height:100%;display:block}
+
+/* ===== progress + toc ===== */
+#progress{position:fixed;top:0;left:0;height:4px;width:0;background:var(--grad);z-index:70}
+#toc{position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:60;display:flex;flex-direction:column;gap:14px}
+#toc a{display:flex;align-items:center;gap:10px;justify-content:flex-end;color:var(--pink-soft);text-decoration:none;
+  font:12px 'Space Mono',monospace;letter-spacing:.08em}
+#toc a span{opacity:0;transform:translateX(8px);transition:.3s;max-width:260px;text-align:right}
+#toc a:hover span,#toc a.on span{opacity:1;transform:none}
+#toc a::after{content:"";flex:none;width:10px;height:10px;border-radius:50%;border:2px solid var(--pink-soft);transition:.3s}
+#toc a.on::after{background:var(--grad);border-color:transparent;transform:scale(1.35)}
+@media(max-width:800px){#toc{right:8px}#toc a span{display:none}}
+
+/* ===== cursor sparkle + confetti ===== */
+.spark{position:fixed;pointer-events:none;z-index:80}
+
+/* ===== tombol musik ===== */
+#music{position:fixed;left:16px;bottom:16px;z-index:75;width:52px;height:52px;border-radius:50%;border:2px solid var(--pink-soft);
+  background:#2a1218cc;backdrop-filter:blur(6px);cursor:pointer;display:flex;align-items:flex-end;justify-content:center;gap:4px;padding:15px 0;
+  opacity:0;pointer-events:none;transition:opacity .6s,transform .2s}
+#music.ready{opacity:1;pointer-events:auto}
+#music:hover{transform:scale(1.08)}
+#music i{display:block;width:4px;height:6px;border-radius:2px;background:var(--grad);transition:height .3s}
+#music.on i{animation:eq .9s ease-in-out infinite}
+#music.on i:nth-child(2){animation-delay:.2s}
+#music.on i:nth-child(3){animation-delay:.4s}
+#music.on i:nth-child(4){animation-delay:.1s}
+@keyframes eq{0%,100%{height:5px}50%{height:20px}}
+
+/* ===== amplop ===== */
+#intro{position:fixed;inset:0;display:grid;place-items:center;background:var(--bg);z-index:100;transition:opacity .8s,visibility .8s}
+#intro.hide{opacity:0;visibility:hidden}
+.env{width:min(330px,80vw);aspect-ratio:3/2;background:var(--peach);position:relative;cursor:pointer;border-radius:8px;
+  box-shadow:0 20px 60px #000a,0 0 0 2px #ffffff22;transition:transform .4s}
+.env:hover{transform:translateY(-6px) rotate(-1deg)}
+.flap{position:absolute;inset:0 0 auto 0;height:55%;background:var(--pink-soft);clip-path:polygon(0 0,100% 0,50% 100%);
+  transform-origin:top;transition:transform .6s}
+.env.open .flap{transform:rotateX(180deg)}
+.seal{position:absolute;left:50%;top:50%;width:48px;height:48px;border-radius:50%;background:var(--grad);
+  transform:translate(-50%,-50%);display:grid;place-items:center;transition:opacity .3s}
+.seal svg{width:22px;height:22px;fill:var(--paper)}
+.env.open .seal{opacity:0}
+.hint{position:absolute;bottom:-46px;width:100%;text-align:center;color:var(--pink-soft);font:1.5rem 'Caveat',cursive}
+.hint small{display:block;font:11px 'Space Mono',monospace;letter-spacing:.1em;opacity:.7;margin-top:4px}
+
+/* ===== layout umum ===== */
+main{max-width:760px;margin:0 auto;padding:0 20px 14vh}
+.label{font:12px 'Space Mono',monospace;letter-spacing:.18em;color:var(--pink-soft);text-transform:uppercase}
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;gap:22px}
+.hero h1{font:700 clamp(3rem,10vw,6rem)/.95 'Caveat',cursive;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.opening{font:2rem/1.35 'Caveat',cursive;min-height:7rem;color:var(--paper)}
+.scroll-hint{width:28px;height:28px;color:var(--pink-soft);animation:bob 1.6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(10px)}}
+
+.chapter{padding-top:14vh}
+.chapter-head{margin-bottom:9vh}
+.chapter-head .num{font:700 clamp(4rem,14vw,8rem)/1 'Caveat',cursive;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.chapter-head h2{font:700 clamp(2rem,6vw,3rem)/1.1 'Caveat',cursive;margin:4px 0 14px}
+.roles{display:flex;flex-wrap:wrap;gap:8px}
+.roles span{font:12px 'Space Mono',monospace;padding:6px 12px;border-radius:99px;border:1.5px solid var(--pink-soft);color:var(--pink-soft)}
+
+/* ===== halaman kertas ===== */
+.page{
+  position:relative;color:var(--ink);background-color:var(--paper);
+  background-image:repeating-linear-gradient(transparent 0 31px,#f3d9c8 31px 32px);
+  padding:44px 32px 36px 64px;margin-bottom:12vh;border-radius:4px;line-height:32px;
+  box-shadow:0 12px 40px #0008;
+}
+.page::before{content:"";position:absolute;left:18px;top:28px;bottom:28px;width:16px;
+  background:radial-gradient(circle,var(--bg) 0 6px,transparent 7px) 0 0/16px 110px repeat-y;opacity:.85}
+.tape{position:absolute;top:-14px;left:50%;width:110px;height:28px;transform:translateX(-50%) rotate(-3deg);
+  background:repeating-linear-gradient(45deg,var(--pink-soft) 0 8px,var(--peach) 8px 16px);opacity:.9}
+.date{font:12px 'Space Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--pink);line-height:20px}
+.page h3{font:700 2.5rem/1.1 'Caveat',cursive;margin:6px 0 10px;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.page p{margin-bottom:32px}
+.page p:last-child{margin-bottom:0}
+.sign{font:700 2.6rem/1 'Caveat',cursive;text-align:right;color:var(--pink)}
+@media(max-width:560px){.page{padding:40px 20px 30px 48px}.page::before{left:12px}}
+
+/* polaroid */
+.polaroid{width:230px;background:#fff;padding:10px 10px 14px;margin:36px auto 28px;transform:rotate(-3deg);
+  box-shadow:0 6px 18px #0004;transition:transform .4s;position:relative;line-height:1}
+.polaroid:hover{transform:rotate(0) scale(1.05)}
+.polaroid::before{content:"";position:absolute;top:-13px;left:50%;width:80px;height:24px;transform:translateX(-50%) rotate(4deg);
+  background:repeating-linear-gradient(45deg,var(--peach) 0 8px,var(--pink-soft) 8px 16px);opacity:.9}
+.polaroid img{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:linear-gradient(135deg,var(--pink-soft),var(--peach))}
+.polaroid figcaption{text-align:center;font:1.35rem 'Caveat',cursive;margin-top:10px}
+
+/* stiker draggable */
+.sticker{position:absolute;width:56px;height:56px;cursor:grab;touch-action:none;z-index:5}
+.sticker svg{fill:var(--c,var(--pink));pointer-events:none}
+
+/* ===== BARU: spoiler (klik buat buka) ===== */
+.spoiler{filter:blur(6px);cursor:pointer;transition:filter .5s;user-select:none;border-bottom:2px dashed var(--pink)}
+.spoiler.show{filter:none;user-select:auto}
+
+/* ===== BARU: voice note ===== */
+.voice{display:flex;align-items:center;gap:12px;margin:8px 0 32px;padding:8px 18px 8px 8px;border:0;border-radius:99px;cursor:pointer;
+  background:#ffe6d2;color:var(--ink);font:1.3rem 'Caveat',cursive;line-height:1;box-shadow:0 4px 12px #0003;transition:transform .2s}
+.voice:hover{transform:scale(1.04)}
+.voice .pl{width:38px;height:38px;border-radius:50%;background:var(--grad);display:grid;place-items:center;color:#fff;font:14px sans-serif}
+.voice .bars{display:flex;align-items:center;gap:3px;height:22px}
+.voice .bars i{width:3px;height:6px;border-radius:2px;background:var(--pink)}
+.voice.on .bars i{animation:eq .8s ease-in-out infinite}
+.voice.on .bars i:nth-child(2n){animation-delay:.25s}
+.voice.on .bars i:nth-child(3n){animation-delay:.5s}
+
+/* ===== BARU: statistik ===== */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:16px;margin:24px 0 8px;text-align:center}
+.stats div{line-height:1.1}
+.stats b{display:block;font:700 3.2rem/1 'Caveat',cursive;color:var(--pink)}
+.stats small{font:11px 'Space Mono',monospace;letter-spacing:.08em;text-transform:uppercase;line-height:16px;display:block;margin-top:6px}
+
+/* ===== penutup ===== */
+.btn{font:700 1.6rem 'Caveat',cursive;border:0;cursor:pointer;color:#fff;background:var(--grad);padding:10px 26px;border-radius:99px;
+  box-shadow:0 8px 24px #ff4fa355;transition:transform .2s}
+.btn:hover{transform:scale(1.06) rotate(-1deg)}
+#rainClose{display:none;position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:96}
+#rainClose:hover{transform:translateX(-50%) scale(1.06)}
+.secret{max-height:0;overflow:hidden;opacity:0;transition:max-height 1.2s ease,opacity 1s ease}
+.secret.open{max-height:2000px;opacity:1;margin-top:28px}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+</style>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13/dist/gsap.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13/dist/ScrollTrigger.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13/dist/Draggable.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/tsparticles-confetti@2.12.0/tsparticles.confetti.bundle.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/matter-js@0.19.0/build/matter.min.js"></script>
+</head>
+<body>
+
+<!-- ===== ikon SVG ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 1l2.6 7.4L22 11l-7.4 2.6L12 21l-2.6-7.4L2 11l7.4-2.6z"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.2C.8 8.2 3 4.5 6.6 4.5c2 0 3.5 1 5.4 3 1.9-2 3.4-3 5.4-3 3.6 0 5.8 3.700 4.200 7.300C19.500 16.400 12 21 12 21z"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 16.5 4.500 9l1.400-1.400L12 13.700l6.100-6.100L19.500 9z"/></symbol>
+</svg>
+
+<!-- ===== MUSIK LATAR =====
+     Taruh file lagu kamu di folder musik/ lalu ganti nama file di bawah.
+     Pakai .mp3 (paling aman di semua browser). -->
+<audio id="bgm" loop preload="auto" src="musik/lagu.mp3"></audio>
+<button id="music" aria-label="Putar atau jeda musik"><i></i><i></i><i></i><i></i></button>
+
+<div id="progress"></div>
+<button class="btn" id="rainClose">tutup hujan</button>
+
+<!-- daftar isi samping (urutannya harus sama dengan urutan bab di bawah) -->
+<nav id="toc">
+  <a href="#prolog"><span>PROLOG</span></a>
+  <a href="#awal"><span>START(ING)</span></a>
+  <a href="#seleksi"><span>BUKALAPAK 1-3</span></a>
+  <a href="#pengumuman"><span>FINALIST ANOUNCEMENT</span></a>
+  <a href="#tasik"><span>TASIKMALAYA</span></a>
+  <a href="#stembayo"><span>STEMBAYO</span></a>
+  <a href="#smktiga"><span>SMK 3 YOGYAKARTA</span></a>
+  <a href="#process"><span>PROCESSES</span></a>
+  <a href="#places"><span>BASECAMPS</span></a>
+  <a href="#ketua"><span>NAFILUY</span></a>
+  <a href="#periset"><span>KAK FATIMUY</span></a>
+  <a href="#multimedia"><span>AFNANUY</span></a>
+  <a href="#aku"><span>RESKUY PACAR MU ZHICHENG APPROVE & CONFIRM BY TIMES FENGJUN ENT</span></a>
+  <a href="#epilog"><span>EPILOG</span></a>
+</nav>
+
+<!-- amplop pembuka -->
+<div id="intro">
+  <div class="env" id="env">
+    <div class="flap"></div>
+    <div class="seal"><svg class="i"><use href="#i-heart"/></svg></div>
+    <div class="hint">klik buat buka<small>nyalain suara ya ♪</small></div>
+  </div>
+</div>
+
+<main>
+
+  <!-- ================= PROLOG ================= -->
+  <section class="hero chapter" id="prolog" style="padding-top:0">
+    <div class="label">Diary Nº 01 · LIDM · 2026</div>
+    <h1>SELAMAT<br>KEPADA TIM</h1>
+    <p class="opening" id="typed" data-text="Hi! this is my love letter for you my selamanya selamat kepada tim cintaku <3"></p>
+    <div class="scroll-hint"><svg class="i" fill="currentColor"><use href="#i-down"/></svg></div>
+  </section>
+
+  <!-- =====================================================
+       BAGIAN PERJALANAN (bab 01-08). Tiap bab = 1 section.
+       Salin blok <article> untuk nambah halaman.
+       Opsional: tambah data-song="musik/lagu2.mp3" di <section>
+       biar lagunya ganti pelan-pelan (crossfade) pas bab ini kebuka.
+       ===================================================== -->
+
+  <section class="chapter" id="awal">
+    <div class="chapter-head"><div class="num">01</div><h2>Start(ing)</h2></div>
+    <article class="page" style="--r:-1deg">
+      <span class="tape"></span>
+      <div class="sticker" style="top:-18px;right:20px;--sr:12deg"><svg class="i"><use href="#i-star"/></svg></div>
+      <div class="date">Momen / tanggal</div>
+      <h3>Awal mula</h3>
+      <p>Ceritakan gimana semuanya dimulai. Siapa yang ngajak, apa yang kalian pikirin waktu itu.</p>
+      <p>Coba tulis satu hal yang <span class="spoiler">dulu kamu nggak berani bilang ke mereka (klik buat buka)</span>.</p>
+    </article>
+  </section>
+
+  <section class="chapter" id="seleksi">
+    <div class="chapter-head"><div class="num">02</div><h2>Bukalapak 1-3</h2></div>
+    <article class="page" style="--r:.8deg">
+      <span class="tape"></span>
+      <div class="date">Momen / tanggal</div>
+      <h3>Tahap seleksi</h3>
+      <p>Cerita seleksi tahap 1 sampai 3.</p>
+    </article>
+  </section>
+
+  <section class="chapter" id="pengumuman">
+    <div class="chapter-head"><div class="num">03</div><h2>Finalist Announcement</h2></div>
+    <article class="page" style="--r:-.8deg">
+      <span class="tape"></span>
+      <div class="sticker" style="top:-16px;left:-10px;--sr:-10deg;--c:var(--orange)"><svg class="i"><use href="#i-heart"/></svg></div>
+      <div class="date">Momen / tanggal</div>
+      <h3>Hari pengumuman</h3>
+      <p>Gimana rasanya pas nama kalian muncul? Siapa yang teriak duluan?</p>
+    </article>
+  </section>
+
+  <section class="chapter" id="tasik">
+    <div class="chapter-head"><div class="num">04</div><h2>Tasikmalaya</h2></div>
+    <article class="page" style="--r:1deg">
+      <span class="tape"></span>
+      <div class="date">Momen / tanggal</div>
+      <h3>Di Tasikmalaya</h3>
+      <p>Cerita di sana.</p>
+      <figure class="polaroid">
+        <img src="foto/tasik-1.jpg" alt="">
+        <figcaption>caption foto</figcaption>
+      </figure>
+    </article>
+  </section>
+
+  <section class="chapter" id="stembayo">
+    <div class="chapter-head"><div class="num">05</div><h2>Stembayo</h2></div>
+    <article class="page" style="--r:-.6deg">
+      <span class="tape"></span>
+      <div class="date">Momen / tanggal</div>
+      <h3>Stembayo</h3>
+      <p>Cerita di sini.</p>
+    </article>
+  </section>
+
+  <section class="chapter" id="smktiga">
+    <div class="chapter-head"><div class="num">06</div><h2>SMK 3 Yogyakarta</h2></div>
+    <article class="page" style="--r:.6deg">
+      <span class="tape"></span>
+      <div class="date">Momen / tanggal</div>
+      <h3>SMK 3 Yogyakarta</h3>
+      <p>Cerita di sini.</p>
+    </article>
+  </section>
+
+  <section class="chapter" id="process">
+    <div class="chapter-head"><div class="num">07</div><h2>Processes</h2></div>
+    <article class="page" style="--r:-1deg">
+      <span class="tape"></span>
+      <div class="date">Momen / tanggal</div>
+      <h3>Proses yang nggak kelihatan</h3>
+      <p>Revisi ke-sekian, begadang, alat yang error jam 2 pagi. Bagian yang orang lain nggak lihat.</p>
+    </article>
+  </section>
+
+  <section class="chapter" id="places">
+    <div class="chapter-head"><div class="num">08</div><h2>Basecamps</h2></div>
+    <article class="page" style="--r:.8deg">
+      <span class="tape"></span>
+      <div class="date">Momen / tanggal</div>
+      <h3>Tempat-tempat kita</h3>
+      <p>Tempat kalian ngumpul dan kerja. Satu tempat, satu kenangan.</p>
+    </article>
+  </section>
+
+  <!-- ================= BAGIAN ORANG (bab 09-12) ================= -->
+  <section class="chapter" id="ketua">
+    <div class="chapter-head">
+      <div class="num">09</div>
+      <h2>Untuk Nafil</h2>
+      <div class="roles"><span>Ketua Tim</span><span>Hardware</span></div>
+    </div>
+
+    <article class="page" style="--r:-1deg">
+      <span class="tape"></span>
+      <div class="sticker" style="top:-18px;right:20px;--sr:12deg"><svg class="i"><use href="#i-star"/></svg></div>
+      <div class="date">Momen / tanggal</div>
+      <h3>Judul halaman</h3>
+      <p>Tulis ceritamu di sini. Satu pasang tag &lt;p&gt; = satu paragraf.</p>
+      <!-- voice note: taruh rekaman di folder suara/ (opsional, hapus blok ini kalau nggak dipakai) -->
+      <button class="voice" data-src="suara/ketua.mp3"><span class="pl">▶</span><span class="bars"><i></i><i></i><i></i><i></i><i></i></span>dengerin pesan suaraku</button>
+      <figure class="polaroid">
+        <img src="foto/ketua-1.jpg" alt="">
+        <figcaption>caption foto</figcaption>
+      </figure>
+    </article>
+
+    <article class="page" style="--r:.8deg">
+      <span class="tape"></span>
+      <div class="date">Momen / tanggal</div>
+      <h3>Halaman berikutnya</h3>
+      <p>Ceritakan hal lain tentang dia.</p>
+    </article>
+  </section>
+
+  <section class="chapter" id="periset">
+    <div class="chapter-head">
+      <div class="num">10</div>
+      <h2>Untuk Kak Fatimah</h2>
+      <div class="roles"><span>Riset</span><span>Penulisan</span><span>Proposal</span></div>
+    </div>
+    <article class="page" style="--r:1deg">
+      <span class="tape"></span>
+      <div class="sticker" style="top:-16px;left:-10px;--sr:-10deg;--c:var(--orange)"><svg class="i"><use href="#i-heart"/></svg></div>
+      <div class="date">Momen / tanggal</div>
+      <h3>Judul halaman</h3>
+      <p>Tulis ceritamu di sini.</p>
+      <button class="voice" data-src="suara/periset.mp3"><span class="pl">▶</span><span class="bars"><i></i><i></i><i></i><i></i><i></i></span>dengerin pesan suaraku</button>
+    </article>
+  </section>
+
+  <section class="chapter" id="multimedia">
+    <div class="chapter-head">
+      <div class="num">11</div>
+      <h2>Untuk Afnan</h2>
+      <div class="roles"><span>Multimedia</span><span>Hardware</span></div>
+    </div>
+    <article class="page" style="--r:-.8deg">
+      <span class="tape"></span>
+      <div class="date">Momen / tanggal</div>
+      <h3>Judul halaman</h3>
+      <p>Tulis ceritamu di sini.</p>
+      <button class="voice" data-src="suara/multimedia.mp3"><span class="pl">▶</span><span class="bars"><i></i><i></i><i></i><i></i><i></i></span>dengerin pesan suaraku</button>
+    </article>
+  </section>
+
+  <section class="chapter" id="aku">
+    <div class="chapter-head">
+      <div class="num">12</div>
+      <h2>Dan Aku</h2>
+      <div class="roles"><span>PERAN KAMU</span></div>
+    </div>
+    <article class="page" style="--r:.6deg">
+      <span class="tape"></span>
+      <div class="date">Momen / tanggal</div>
+      <h3>Cerita dari sisiku</h3>
+      <p>Tulis ceritamu sendiri di sini.</p>
+    </article>
+  </section>
+
+  <!-- ================= EPILOG ================= -->
+  <section class="chapter" id="epilog">
+    <div class="chapter-head">
+      <div class="num">∞</div>
+      <h2>Epilog</h2>
+    </div>
+
+    <article class="page" style="--r:.5deg">
+      <span class="tape"></span>
+      <div class="date">Kalau dihitung-hitung</div>
+      <h3>Kita dalam angka</h3>
+      <div class="stats">
+        <div><b class="count" data-to="0">0</b><small>hari bareng</small></div>
+        <div><b class="count" data-to="0">0</b><small>kali revisi</small></div>
+        <div><b class="count" data-to="0">0</b><small>gelas kopi</small></div>
+        <div><b class="count" data-to="4">0</b><small>orang, satu tim</small></div>
+      </div>
+      <p style="margin-top:32px">Ganti angka di atas (atribut data-to) sama angka asli kalian.</p>
+    </article>
+
+    <article class="page" style="--r:-.6deg">
+      <span class="tape"></span>
+      <div class="sticker" style="top:-18px;right:24px;--sr:14deg"><svg class="i"><use href="#i-star"/></svg></div>
+      <div class="sticker" style="bottom:-14px;left:30px;--sr:-8deg;--c:var(--orange)"><svg class="i"><use href="#i-heart"/></svg></div>
+      <div class="date">Untuk kita berempat</div>
+      <h3>Terima kasih</h3>
+      <p>Tulis pesan penutup dari kamu.</p>
+      <p style="text-align:center"><button class="btn" id="secretBtn">buka pesan terakhir</button></p>
+      <div class="secret" id="secret">
+        <p>Pesan rahasia yang cuma muncul di akhir. Tulis yang paling tulus di sini.</p>
+        <p class="sign">- Gongzhu</p>
+        <p style="text-align:center"><button class="btn" id="rainBtn">hujan stiker</button></p>
+      </div>
+    </article>
+  </section>
+
+</main>
+
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  gsap.registerPlugin(ScrollTrigger, Draggable);
+
+  const PALETTE = ['#ff4fa3','#ff8a3d','#ffc2dc','#ffd9b8','#ffffff'];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- confetti (tsParticles) ---------- */
+  function burst(x, y, n = 90){
+    if (reduce) return;
+    confetti({
+      particleCount: n, spread: 90, startVelocity: 38, scalar: 1.1, zIndex: 90,
+      origin: {x: x / innerWidth, y: y / innerHeight},
+      colors: PALETTE, shapes: ['star', 'circle', 'square']
+    });
+  }
+
+  /* =====================================================
+     MUSIK LATAR
+     - mulai pas amplop diklik (browser baru ngizinin suara setelah ada klik)
+     - fade in / fade out halus
+     - tombol kiri bawah buat jeda/putar
+     - otomatis jeda kalau tab disembunyikan
+     - data-song di <section> = ganti lagu per bab (crossfade)
+     - volume turun otomatis waktu voice note diputar
+     ===================================================== */
+  const bgm = document.getElementById('bgm'), mBtn = document.getElementById('music');
+  const VOL = .45;
+  const vol = {v: 0};
+  let musicOn = false, userPaused = false, ducked = false, curSrc = bgm.getAttribute('src');
+  const applyVol = () => { bgm.volume = Math.max(0, Math.min(1, vol.v)); };
+  const target = () => ducked ? VOL * .2 : VOL;
+  const fadeVol = (to, d = 1.2, done) =>
+    gsap.to(vol, {v: to, duration: d, ease: 'none', onUpdate: applyVol, onComplete: done, overwrite: true});
+
+  function playMusic(){
+    vol.v = 0; applyVol();
+    bgm.play().then(() => {
+      musicOn = true; mBtn.classList.add('on'); fadeVol(target(), 2);
+    }).catch(() => {});                              // file belum ada / diblokir: diam saja
+  }
+  function pauseMusic(){
+    musicOn = false; mBtn.classList.remove('on');
+    fadeVol(0, .6, () => bgm.pause());
+  }
+  mBtn.addEventListener('click', () => {
+    if (musicOn){ userPaused = true; pauseMusic(); }
+    else { userPaused = false; playMusic(); }
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && musicOn){ bgm.pause(); }
+    else if (!document.hidden && musicOn){ bgm.play().catch(() => {}); }
+  });
+
+  function switchSong(src){
+    if (!src || src === curSrc) return;
+    curSrc = src;
+    if (!musicOn || userPaused){ bgm.src = src; return; }
+    fadeVol(0, 1, () => {
+      bgm.src = src;
+      bgm.play().then(() => fadeVol(target(), 1.5)).catch(() => {});
+    });
+  }
+  document.querySelectorAll('[data-song]').forEach(sec => {
+    ScrollTrigger.create({trigger: sec, start: 'top 60%', end: 'bottom 60%',
+      onToggle: self => { if (self.isActive) switchSong(sec.dataset.song); }});
+  });
+
+  /* ---------- voice note ---------- */
+  document.querySelectorAll('.voice').forEach(btn => {
+    const a = new Audio(btn.dataset.src);
+    const pl = btn.querySelector('.pl');
+    const setDuck = on => { ducked = on; if (musicOn) fadeVol(target(), .6); };
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.voice.on').forEach(o => { if (o !== btn) o.click(); });
+      a.paused ? a.play().catch(() => {}) : a.pause();
+    });
+    a.addEventListener('play',  () => { btn.classList.add('on'); pl.textContent = '❚❚'; setDuck(true); });
+    const off = () => { btn.classList.remove('on'); pl.textContent = '▶'; setDuck(false); };
+    a.addEventListener('pause', off); a.addEventListener('ended', off);
+  });
+
+  /* ---------- amplop -> buka -> hero muncul -> typewriter ---------- */
+  const env = document.getElementById('env'), intro = document.getElementById('intro');
+  gsap.set('.hero .label, .hero h1, .hero .scroll-hint', {opacity: 0});
+
+  function typeWriter(){
+    const el = document.getElementById('typed'), t = el.dataset.text; let i = 0;
+    (function step(){el.textContent = t.slice(0, ++i); if (i < t.length) setTimeout(step, 45)})();
+  }
+  env.addEventListener('click', e => {
+    env.classList.add('open');
+    burst(e.clientX, e.clientY, 80);
+    playMusic();                                     // klik = izin buat suara
+    mBtn.classList.add('ready');
+    gsap.timeline({delay: .9})
+      .to(intro, {opacity: 0, duration: .8, onComplete: () => intro.style.display = 'none'})
+      .fromTo('.hero .label', {y: 20}, {y: 0, opacity: 1, duration: .6}, '-=.4')
+      .fromTo('.hero h1', {y: 70, rotation: -3}, {y: 0, rotation: 0, opacity: 1, duration: 1, ease: 'power3.out'}, '-=.3')
+      .add(typeWriter, '-=.4')
+      .to('.hero .scroll-hint', {opacity: 1, duration: .6}, '+=1');
+  }, {once: true});
+
+  /* ---------- halaman kertas: masuk miring lalu "mendarat" ---------- */
+  gsap.utils.toArray('.page').forEach(p => {
+    const r = parseFloat(getComputedStyle(p).getPropertyValue('--r')) || 0;
+    gsap.fromTo(p,
+      {y: 90, opacity: 0, rotation: r + 5, scale: .96},
+      {y: 0, opacity: 1, rotation: r, scale: 1, duration: 1, ease: 'power3.out',
+       scrollTrigger: {trigger: p, start: 'top 85%', toggleActions: 'play none none reverse'}});
+  });
+
+  /* ---------- parallax angka bab ---------- */
+  gsap.utils.toArray('.chapter-head .num').forEach(n => {
+    gsap.to(n, {yPercent: -30, ease: 'none',
+      scrollTrigger: {trigger: n.closest('.chapter'), start: 'top bottom', end: 'bottom top', scrub: true}});
+  });
+
+  /* ---------- progress bar + daftar isi aktif ---------- */
+  gsap.to('#progress', {width: '100%', ease: 'none',
+    scrollTrigger: {start: 0, end: 'max', scrub: .3}});
+
+  document.querySelectorAll('#toc a').forEach(a => {
+    const sec = document.querySelector(a.getAttribute('href'));
+    if (!sec) return;                                // lewati kalau id-nya belum ada
+    ScrollTrigger.create({trigger: sec, start: 'top 50%', end: 'bottom 50%',
+      toggleClass: {targets: a, className: 'on'}});
+  });
+
+  /* ---------- stiker bisa diseret ---------- */
+  document.querySelectorAll('.sticker').forEach(el => {
+    gsap.set(el, {rotation: parseFloat(getComputedStyle(el).getPropertyValue('--sr')) || 0});
+    Draggable.create(el, {
+      type: 'x,y',
+      onPress(){gsap.to(el, {scale: 1.25, duration: .2})},
+      onRelease(){gsap.to(el, {scale: 1, duration: .6, ease: 'elastic.out(1,.4)'})}
+    });
+  });
+
+  /* ---------- BARU: spoiler, klik buat buka ---------- */
+  document.querySelectorAll('.spoiler').forEach(s => {
+    s.addEventListener('click', e => {
+      if (s.classList.contains('show')) return;
+      s.classList.add('show');
+      burst(e.clientX, e.clientY, 30);
+    });
+  });
+
+  /* ---------- BARU: angka naik pelan (count-up) ---------- */
+  document.querySelectorAll('.count').forEach(el => {
+    const to = +el.dataset.to || 0, o = {v: 0};
+    ScrollTrigger.create({trigger: el, start: 'top 90%', once: true, onEnter: () =>
+      gsap.to(o, {v: to, duration: 2, ease: 'power2.out', onUpdate: () => el.textContent = Math.round(o.v)})});
+  });
+
+  /* ---------- BARU: tap halaman = percikan kecil ---------- */
+  document.querySelectorAll('.page').forEach(p => p.addEventListener('click', e => {
+    if (e.target.closest('button, .sticker, .spoiler')) return;
+    burst(e.clientX, e.clientY, 14);
+  }));
+
+  /* ---------- kursor kilau ---------- */
+  const STAR = c => `<svg viewBox="0 0 24 24" width="100%" height="100%" fill="${c}" aria-hidden="true"><path d="M12 1l2.6 7.4L22 11l-7.4 2.6L12 21l-2.6-7.4L2 11l7.4-2.6z"/></svg>`;
+  let lastSpark = 0;
+  if (!reduce) addEventListener('pointermove', e => {
+    const now = performance.now(); if (now - lastSpark < 35) return; lastSpark = now;
+    const s = document.createElement('div'), size = 10 + Math.random() * 14;
+    s.className = 'spark';
+    s.style.cssText = `left:${e.clientX}px;top:${e.clientY}px;width:${size}px;height:${size}px`;
+    s.innerHTML = STAR(PALETTE[Math.floor(Math.random() * PALETTE.length)]);
+    document.body.appendChild(s);
+    gsap.fromTo(s, {xPercent: -50, yPercent: -50, scale: 1, rotation: 0, opacity: 1},
+      {x: Math.random() * 60 - 30, y: 50, scale: .2, rotation: 180, opacity: 0,
+       duration: .9, ease: 'power1.out', onComplete: () => s.remove()});
+  });
+
+  /* ---------- hujan stiker (Matter.js) ---------- */
+  const {Engine, Render, Runner, Bodies, Composite, Mouse, MouseConstraint} = Matter;
+  const HEART = 'M12 21s-7.5-4.6-9.6-9.2C.8 8.2 3 4.5 6.6 4.5c2 0 3.5 1 5.4 3 1.9-2 3.4-3 5.4-3 3.6 0 5.8 3.7 4.2 7.3C19.5 16.4 12 21 12 21z';
+  const STARP = 'M12 1l2.6 7.4L22 11l-7.4 2.6L12 21l-2.6-7.4L2 11l7.4-2.6z';
+  const tex = (p, c) => 'data:image/svg+xml;utf8,' + encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24"><path fill="${c}" d="${p}"/></svg>`);
+  const KINDS = [[HEART,'#ff4fa3'],[HEART,'#ff8a3d'],[STARP,'#ffc2dc'],[STARP,'#ffd9b8'],[STARP,'#ff4fa3']]
+    .map(([p, c]) => tex(p, c));
+
+  let rain = null;
+  const rainClose = document.getElementById('rainClose');   // dulu elemen ini belum ada -> script berhenti di sini
+
+  function startRain(){
+    if (rain) return;
+    const W = innerWidth, H = innerHeight, t = 60, dpr = devicePixelRatio || 1;
+    const engine = Engine.create();
+    const render = Render.create({element: document.body, engine,
+      options: {width: W, height: H, pixelRatio: dpr, background: 'transparent', wireframes: false}});
+    Object.assign(render.canvas.style, {position: 'fixed', inset: '0', zIndex: '95', touchAction: 'none'});
+
+    Composite.add(engine.world, [
+      Bodies.rectangle(W / 2, H + t / 2, W * 2, t, {isStatic: true, render: {visible: false}}),
+      Bodies.rectangle(-t / 2, H / 2, t, H * 3, {isStatic: true, render: {visible: false}}),
+      Bodies.rectangle(W + t / 2, H / 2, t, H * 3, {isStatic: true, render: {visible: false}})
+    ]);
+
+    const mouse = Mouse.create(render.canvas);
+    mouse.pixelRatio = dpr;
+    mouse.element.removeEventListener('mousewheel', mouse.mousewheel);
+    mouse.element.removeEventListener('DOMMouseScroll', mouse.mousewheel);
+    Composite.add(engine.world, MouseConstraint.create(engine, {mouse, constraint: {stiffness: .2, render: {visible: false}}}));
+
+    const runner = Runner.create();
+    Runner.run(runner, engine); Render.run(render);
+
+    let n = 0;
+    const timer = setInterval(() => {
+      if (n++ >= 60) return clearInterval(timer);
+      const r = 20 + Math.random() * 18;
+      Composite.add(engine.world, Bodies.circle(40 + Math.random() * (W - 80), -40, r, {
+        restitution: .55, friction: .1, angle: Math.random() * 6,
+        render: {sprite: {texture: KINDS[Math.floor(Math.random() * KINDS.length)], xScale: 2 * r / 96, yScale: 2 * r / 96}}
+      }));
+    }, 90);
+
+    rain = {engine, render, runner, timer};
+    rainClose.style.display = 'block';
+  }
+
+  function stopRain(){
+    if (!rain) return;
+    clearInterval(rain.timer);
+    Render.stop(rain.render); Runner.stop(rain.runner);
+    Composite.clear(rain.engine.world, false); Engine.clear(rain.engine);
+    rain.render.canvas.remove(); rain = null;
+    rainClose.style.display = 'none';
+  }
+
+  document.getElementById('rainBtn').addEventListener('click', startRain);
+  rainClose.addEventListener('click', stopRain);
+
+  /* ---------- pesan terakhir ---------- */
+  document.getElementById('secretBtn').addEventListener('click', e => {
+    document.getElementById('secret').classList.add('open');
+    const r = e.target.getBoundingClientRect();
+    burst(r.left + r.width / 2, r.top, 140);
+    e.target.style.display = 'none';
+    setTimeout(() => ScrollTrigger.refresh(), 1300);
+  });
+});
+</script>
+</body>
+</html>
